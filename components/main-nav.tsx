@@ -8,13 +8,11 @@ export function MainNav({
   className,
   isOpen,
   setIsOpen,
-  ...props
 }: React.HTMLAttributes<HTMLElement> & {
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const pathname = usePathname();
-  const params = useParams();
 
   const routes = [
     {

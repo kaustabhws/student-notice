@@ -29,7 +29,6 @@ import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
-  CookingPot,
   MoreHorizontal,
   Pencil,
   PlusCircle,
@@ -38,7 +37,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { set, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {

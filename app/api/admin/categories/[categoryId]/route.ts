@@ -14,7 +14,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { name, description, id } = body;
+    const { name, description } = body;
 
     if (!name || !description) {
       return new NextResponse("Bad Request", { status: 400 });

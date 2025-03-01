@@ -56,10 +56,13 @@ export const AdminModal = () => {
 
       const response = await axios.post("/api/admin", requestData);
 
-      toast.success("Admin created");
+      if (response.status === 200) {
+        toast.success("Admin created");
+      }
 
       window.location.assign(`/admin/dashboard`);
     } catch (error) {
+      console.log("Something went wrong", error);
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
