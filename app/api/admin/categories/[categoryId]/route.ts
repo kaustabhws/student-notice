@@ -4,10 +4,11 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  context: { params: { categoryId: string } }
+  { params }: { params: Promise<{ categoryId: string }> }
 ) {
   try {
     const user = await auth();
+    const categoryId = (await params).categoryId
 
     if (!user.userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -22,7 +23,7 @@ export async function PATCH(
 
     const isValid = await prismadb.category.findUnique({
       where: {
-        id: context.params.categoryId,
+        id: categoryId,
       },
     });
 
@@ -32,7 +33,7 @@ export async function PATCH(
 
     const category = await prismadb.category.update({
       where: {
-        id: context.params.categoryId,
+        id: categoryId,
       },
       data: {
         name,
