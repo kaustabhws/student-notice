@@ -1,0 +1,194 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id      String  @id @default(cuid())
+  email   String  @unique
+  clerkId String  @unique
+  imgUrl  String?
+  name    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notices         Notice[]
+  noticeViews     NoticeView[]
+  noticeDownloads NoticeDownload[]
+  notifications   Notification[]
+  activities      Activity[]
+}
+
+model Notice {
+  id            String       @id @default(cuid())
+  title         String
+  description   String?      @db.Text
+  content       String?      @db.Text
+  status        NoticeStatus @default(DRAFT)
+  publishedAt   DateTime?
+  expiresAt     DateTime?
+  isFeatured    Boolean      @default(false)
+  viewCount     Int          @default(0)
+  downloadCount Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  author        Admin            @relation(fields: [authorId], references: [id])
+  authorId      String
+  category      Category         @relation(fields: [categoryId], references: [id])
+  categoryId    String
+  files         File[]
+  tags          Tag[]
+  views         NoticeView[]
+  downloads     NoticeDownload[]
+  notifications Notification[]
+}
+
+enum NoticeStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  EXPIRED
+  ARCHIVED
+}
+
+// Category model for organizing notices
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  notices Notice[]
+  subscribers Subscriber[]
+}
+
+// Tag model for additional notice classification
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  // Relations
+  notices Notice[]
+}
+
+// File model for uploaded documents
+model File {
+  id           String   @id @default(cuid())
+  filename     String
+  originalName String
+  path         String
+  mimeType     String
+  size         Int // File size in bytes
+  isPublic     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  notice    Notice           @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  noticeId  String
+  downloads NoticeDownload[]
+  version   Int              @default(1)
+}
+
+// NoticeView model for tracking views
+model NoticeView {
+  id        String   @id @default(cuid())
+  viewedAt  DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+
+  // Relations
+  notice   Notice  @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  noticeId String
+  user     Admin?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId   String?
+}
+
+// NoticeDownload model for tracking downloads
+model NoticeDownload {
+  id           String   @id @default(cuid())
+  downloadedAt DateTime @default(now())
+  ipAddress    String?
+  userAgent    String?
+
+  // Relations
+  notice   Notice  @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  noticeId String
+  file     File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId   String
+  user     Admin?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId   String?
+}
+
+// Notification model for system notifications
+model Notification {
+  id        String           @id @default(cuid())
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  type      NotificationType
+  createdAt DateTime         @default(now())
+
+  // Relations
+  user     Admin   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  notice   Notice? @relation(fields: [noticeId], references: [id], onDelete: SetNull)
+  noticeId String?
+}
+
+enum NotificationType {
+  NOTICE_PUBLISHED
+  NOTICE_UPDATED
+  NOTICE_EXPIRING
+  SYSTEM
+  USER
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  action    String
+  details   String?  @db.Text
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user   Admin  @relation(fields: [userId], references: [id])
+  userId String
+}
+
+// Settings model for system configuration
+model Settings {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  value           String   @db.Text
+  description     String?
+  updatedAt       DateTime @updatedAt
+  updatedByUserId String?
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  // Relations
+  categories Category[]
+}
