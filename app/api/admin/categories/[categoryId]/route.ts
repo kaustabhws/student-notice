@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { categoryId: string } }
+  context: { params: { categoryId: string } }
 ) {
   try {
     const user = await auth();
@@ -22,7 +22,7 @@ export async function PATCH(
 
     const isValid = await prismadb.category.findUnique({
       where: {
-        id: params.categoryId,
+        id: context.params.categoryId,
       },
     });
 
@@ -32,7 +32,7 @@ export async function PATCH(
 
     const category = await prismadb.category.update({
       where: {
-        id: params.categoryId,
+        id: context.params.categoryId,
       },
       data: {
         name,
@@ -42,14 +42,14 @@ export async function PATCH(
 
     return NextResponse.json({ category }, { status: 200 });
   } catch (error) {
-    console.log("CATEGORY_POST_ERROR", error);
+    console.error("CATEGORY_PATCH_ERROR", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { categoryId: string } }
+  context: { params: { categoryId: string } }
 ) {
   try {
     const user = await auth();
@@ -60,7 +60,7 @@ export async function DELETE(
 
     const isValid = await prismadb.category.findUnique({
       where: {
-        id: params.categoryId,
+        id: context.params.categoryId,
       },
     });
 
@@ -70,13 +70,13 @@ export async function DELETE(
 
     await prismadb.category.delete({
       where: {
-        id: params.categoryId,
+        id: context.params.categoryId,
       },
     });
 
     return new NextResponse("Category Deleted", { status: 200 });
   } catch (error) {
-    console.log("CATEGORY_DELETE_ERROR", error);
+    console.error("CATEGORY_DELETE_ERROR", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
