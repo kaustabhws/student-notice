@@ -135,6 +135,7 @@ const CategoriesClient: React.FC<CategoryProps> = ({ categories }) => {
       console.log("Something went wrong", error);
       toast.error("Something went wrong");
     } finally {
+      setOpen(false);
       setLoading(false);
     }
   };
@@ -167,7 +168,6 @@ const CategoriesClient: React.FC<CategoryProps> = ({ categories }) => {
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
-      setOpen(false);
     }
   };
 
