@@ -126,7 +126,7 @@ const CategoriesClient: React.FC<CategoryProps> = ({ categories }) => {
   const handleDelete = async (id: string) => {
     try {
       setLoading(true);
-      const response = await axios.delete(`/api/admin/categories/${id}`);
+      const response = await axios.delete(`/api/admin/categories/${id}`, { data: { id } });
       if (response.status === 200) {
         router.refresh();
         toast.success("Category deleted successfully");

@@ -49,10 +49,15 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  context: { params: { categoryId: string } }
 ) {
   try {
     const user = await auth();
+    const body = await req.json();
+    const { id } = body;
+
+    if(!id) {
+      return new NextResponse("Bad Request", { status: 400 });
+    }
 
     if (!user.userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -60,7 +65,7 @@ export async function DELETE(
 
     const isValid = await prismadb.category.findUnique({
       where: {
-        id: context.params.categoryId,
+        id,
       },
     });
 
@@ -70,7 +75,7 @@ export async function DELETE(
 
     await prismadb.category.delete({
       where: {
-        id: context.params.categoryId,
+        id,
       },
     });
 
