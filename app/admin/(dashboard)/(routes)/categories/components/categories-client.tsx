@@ -181,7 +181,7 @@ const CategoriesClient: React.FC<CategoryProps> = ({ categories }) => {
       />
       <div className="flex-col">
         <div className="flex items-center justify-between mb-5">
-          <Heading title="Categories" description="Manage categories" />
+          <Heading title={`Categories (${categories.length})`} description="Manage categories" />
           <Button
             onClick={handleAddCategory}
             className="flex items-center"
@@ -228,10 +228,10 @@ const CategoriesClient: React.FC<CategoryProps> = ({ categories }) => {
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      className="text-destructive"
+                      className="!text-red-500"
                       onClick={() => handleDeleteClick(category.id)}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
+                      <Trash2 className="mr-2 h-4 w-4 text-red-500" />
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
