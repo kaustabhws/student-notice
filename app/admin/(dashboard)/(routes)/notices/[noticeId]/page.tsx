@@ -1,15 +1,21 @@
 import prismadb from "@/lib/prismadb";
 import { NoticeForm } from "./components/table-form";
 
-const NoticePage = async ({ params }: { params: { noticeId: string } }) => {
+const NoticePage = async ({
+  params,
+}: {
+  params: Promise<{ noticeId: string }>;
+}) => {
+  const noticeId = (await params).noticeId;
+
   const notice = await prismadb.notice.findUnique({
     where: {
-      id: params.noticeId,
+      id: noticeId,
     },
     include: {
-        category: true,
-        files: true,
-    }
+      category: true,
+      files: true,
+    },
   });
 
   const categories = await prismadb.category.findMany();
