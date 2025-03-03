@@ -17,7 +17,7 @@ const NoticePage = async () => {
     id: n.id,
     title: n.title,
     description: n.description || "",
-    fileType: n.files[0]?.mimeType || "unknown",
+    fileType: n.files[0]?.fileType || "unknown",
     category: {
       name: n.category.name,
     },
